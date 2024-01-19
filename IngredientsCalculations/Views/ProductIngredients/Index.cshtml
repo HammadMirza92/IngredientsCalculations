@@ -1,0 +1,144 @@
+﻿@model IEnumerable<IngredientsCalculations.Models.ProductIngredients>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Product Ingredients Information</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div>
+    <h2>Filter Product Information</h2>
+    <form id="filterForm">
+        <div>
+            <label for="filterProductName">Product Name:</label>
+            <input type="text" id="filterProductName" name="filterProductName">
+        </div>
+        <div>
+            <label for="filterIngredientName">Ingredient Name:</label>
+            <input type="text" id="filterIngredientName" name="filterIngredientName">
+        </div>
+        <div>
+            <label for="filterScale">Scale:</label>
+            <input type="text" id="filterScale" name="filterScale">
+        </div>
+        <div>
+            <label for="filterWeight">Weight:</label>
+            <input type="text" id="filterWeight" name="filterWeight">
+        </div>
+    </form>
+</div>
+<table class="table" id="productIngredientsTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Product)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ingredient)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Scale)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.weight)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="tableBody">
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product.productName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ingredient.ingredientName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Scale)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.weight)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+
+        @if (ViewBag.CurrentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo; Previous</span>
+                </a>
+            </li>
+        }
+
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+            </li>
+        }
+
+        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)" aria-label="Next">
+                    <span aria-hidden="true">Next &raquo;</span>
+                </a>
+            </li>
+        }
+
+    </ul>
+</nav>
+
+
+<script>
+    function filterTable() {
+        var inputProductName = document.getElementById('filterProductName').value.toUpperCase();
+        var inputIngredientName = document.getElementById('filterIngredientName').value.toUpperCase();
+        var inputScale = document.getElementById('filterScale').value.toUpperCase();
+        var inputWeight = document.getElementById('filterWeight').value.toUpperCase();
+
+        var tableRows = document.getElementById('tableBody').getElementsByTagName('tr');
+
+        for (var i = 0; i < tableRows.length; i++) {
+            var row = tableRows[i];
+            var cells = row.getElementsByTagName('td');
+            var showRow = true;
+
+            if (cells[0].innerHTML.toUpperCase().indexOf(inputProductName) > -1 &&
+                cells[1].innerHTML.toUpperCase().indexOf(inputIngredientName) > -1 &&
+                cells[2].innerHTML.toUpperCase().indexOf(inputScale) > -1 &&
+                cells[3].innerHTML.toUpperCase().indexOf(inputWeight) > -1) {
+                showRow = true;
+            } else {
+                showRow = false;
+            }
+
+            row.style.display = showRow ? '' : 'none';
+        }
+    }
+
+    // Attach the filterTable function to the input event of the filter fields
+    document.getElementById('filterProductName').addEventListener('input', filterTable);
+    document.getElementById('filterIngredientName').addEventListener('input', filterTable);
+    document.getElementById('filterScale').addEventListener('input', filterTable);
+    document.getElementById('filterWeight').addEventListener('input', filterTable);
+
+    // Initial filter on page load (optional)
+    filterTable();
+</script>
+
